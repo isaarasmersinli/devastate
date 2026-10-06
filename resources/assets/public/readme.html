@@ -1,0 +1,81 @@
+<!doctype html> 
+<html lang="ja-JP">
+<head>
+  <meta charset="utf-8">
+  <title>说明书</title>
+  <style>
+    .back-btn{
+      margin-top:1rem;
+      padding:.6rem 1.4rem;
+      font-size:1rem;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      background:#3b82f6;
+      color:#fff;
+    }
+    .back-btn:hover{opacity:.85;}
+  </style>
+</head>
+
+<body>
+  <p><b>基本说明</b></p>
+  <p>WOlf RPG移植插件由ruka开发，有能力的可以去赞助作者以支持作者持续更新维护插件</p>
+  <a href="https://ci-en.net/creator/12702" target="_blank">点击跳转插件作者主页</a>
+  <p><b>Wolf RPG移植视频教程</b></p>
+  <a href="https://b23.tv/txObEfk" target="_blank">点击跳转学习</a>
+  <p>本移植模板仅供交流学习，请勿用于移植游戏倒卖牟利，因个人行为造成的不良后果需自行承担</p>
+
+  <p><b>操作说明</b></p>
+  <p>HOLD为鼠标右键；DRAG为摇杆键，可以控制游戏角色移动与游戏选项光标移动等操作；</p>
+  <p>Cancel为回退键，可以在游戏中调出菜单选项，部分游戏读档后需要点击此按键以恢复控制操作；</p>
+  <p>↵为确定键，可用于进入游戏与点击确定等重要功能；</p>
+  <p>⚙️为其他功能按键，可进行其他功能，如开启或关闭全屏（隐藏按键），开启或关闭鼠标操作，F8改变显示信息等功能。</p>
+  <p>另外，webview环境不支持下载Save存档文件夹，加载至Save文件夹与下载许可证功能，此功能仅启用服务器端口的浏览器支持。</p>
+  <!-- 返回 / 关闭 按钮 -->
+<!--  <button class="back-btn" onclick="backToIndex()">返回游戏</button>-->
+
+  <script>
+    /* 主退回函数 ── 新增 “closeTab()” 作为最终兜底 */
+    function backToIndex(){
+      /* 1️⃣ 首选：浏览器 / WebView 历史退回 */
+      if (history.length > 1){
+        history.back();               // Android WebView & WKWebView 均支持
+        return;
+      }
+
+      /* 2️⃣ Android：调用注入的 Java 接口关闭 Activity */
+      if (window.Android && typeof window.Android.close === 'function'){
+        window.Android.close();       // 需宿主 addJavascriptInterface
+        return;
+      }
+
+      /* 3️⃣ iOS：通过 WKWebView message handler 让原生关闭 */
+      if (window.webkit
+          && window.webkit.messageHandlers
+          && window.webkit.messageHandlers.close){
+        window.webkit.messageHandlers.close.postMessage(null);
+        return;
+      }
+
+      /* 4️⃣ 普通浏览器：尝试关闭标签或跳转首页 */
+      closeTab();                     // 🔄 新增调用
+    }
+
+    /* 浏览器标签关闭兼容函数 */
+    function closeTab(){
+      /* 1️⃣ 尝试直接关闭（仅对脚本打开的标签有效） */
+      window.close();
+
+      /* 2️⃣ 部分浏览器需先覆盖自身再关闭 */
+      window.open('','_self');
+      window.close();
+
+      /* 3️⃣ 若依旧失败（无历史可退时） */
+      setTimeout(function(){
+        location.replace('index.html');
+      }, 100);
+    }
+  </script>
+</body>
+</html>
